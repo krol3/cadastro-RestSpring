@@ -37,7 +37,7 @@ class CadastroController {
 	@Autowired
 	private CadastroService cadastroService;
 
-	@RequestMapping("/greet")
+	@RequestMapping(value = "/greet", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
 	String sayHello(@RequestParam("name") String name) {
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException("The 'name' parameter must not be null or empty");
