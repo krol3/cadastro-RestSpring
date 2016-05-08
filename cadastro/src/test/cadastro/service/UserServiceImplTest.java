@@ -13,17 +13,15 @@ import org.springframework.context.ApplicationContext;
 
 import cadastro.Application;
 import cadastro.Phone;
-import cadastro.PhoneRepository;
 import cadastro.User;
-import cadastro.UserRepository;
 
 @SpringApplicationConfiguration(classes = Application.class)
 public class UserServiceImplTest {
 
 	private static ApplicationContext applicationContext;
-	private static CadastroService userService;
-	//private static UserRepository userRepository;
-	//private static PhoneRepository phoneRepository;
+	private static CadastroService cadastroService;
+	// private static UserRepository userRepository;
+	// private static PhoneRepository phoneRepository;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -38,12 +36,12 @@ public class UserServiceImplTest {
 		// applicationContext.getBean("phoneRepository");
 
 		// Load the UserServiceImpl service
-		userService = (CadastroService) applicationContext.getBean("userServiceImpl");
+		cadastroService = (CadastroService) applicationContext.getBean("userServiceImpl");
 	}
 
 	@AfterClass
 	public static void afterClass() {
-		//userService.deleteAll();
+		// userService.deleteAll();
 	}
 
 	@Test
@@ -52,16 +50,16 @@ public class UserServiceImplTest {
 		User user = new User("João da Silva", "joao@silva.org", "hunter2");
 
 		// Insert it into the repository
-		userService.registerUser(user);
+		cadastroService.registerUser(user);
 
 		// Check to see if its there
-		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org").get(0);
+		User repositoryUser = cadastroService.findUserByEmailAddress("joao@silva.org");
 		Assert.assertNotNull(repositoryUser);
 		Assert.assertEquals("The user's name is not correct", "João da Silva", repositoryUser.getName());
 		Assert.assertEquals("The user's password is not correct", "hunter2", repositoryUser.getPassword());
 
 		// Remove the user
-		userService.removeUser(repositoryUser.getId());
+		// userService.removeUser(repositoryUser.getId());
 	}
 
 	@Test
@@ -76,10 +74,10 @@ public class UserServiceImplTest {
 		user.setPhones(phones);
 
 		// Insert it into the repository
-		userService.registerUser(user);
+		cadastroService.registerUser(user);
 
 		// Check to see if its there
-		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org").get(0);
+		User repositoryUser = cadastroService.findUserByEmailAddress("joao@silva.org");
 		Assert.assertNotNull(repositoryUser);
 		Assert.assertEquals("The user's name is not correct", "João da Silva", repositoryUser.getName());
 		Assert.assertEquals("The user's password is not correct", "hunter2", repositoryUser.getPassword());
@@ -92,7 +90,7 @@ public class UserServiceImplTest {
 		Assert.assertEquals("Number is wrong", "21212121212", repositoryAddress.getNumber());
 
 		// Remove the user
-		userService.removeUser(repositoryUser.getId());
+		// cadastroService.removeUser(repositoryUser.getId());
 	}
 
 }

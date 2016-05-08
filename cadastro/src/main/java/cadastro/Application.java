@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,13 +16,18 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 @SpringBootApplication
 public class Application {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+
+	@Autowired
+	private RepositoryRestConfiguration repositoryRestConfiguration;
+
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(Application.class, args);
 
 		String[] beanNames = ctx.getBeanDefinitionNames();
 		Arrays.sort(beanNames);
 		for (String beanName : beanNames) {
-			System.out.println("***** beanName: " + beanName);
+			LOG.info("** beanName: " + beanName);
 		}
 	}
 
@@ -28,12 +35,10 @@ public class Application {
 	UserEventHandler userEventHandler() {
 		return new UserEventHandler();
 	}
-	
-	 @Autowired private RepositoryRestConfiguration repositoryRestConfiguration;
 
-	    @PostConstruct
-	    public void exposeIds() {
-	        this.repositoryRestConfiguration.setReturnBodyForPutAndPost(true);
-	    }
+	@PostConstruct
+	public void exposeIds() {
+		this.repositoryRestConfiguration.setReturnBodyForPutAndPost(true);
+	}
 
 }

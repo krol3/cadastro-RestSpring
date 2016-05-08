@@ -1,12 +1,9 @@
 package cadastro.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +22,18 @@ import cadastro.UserRepository;
 @Service
 public class CadastroServiceImpl implements CadastroService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CadastroServiceImpl.class);
+
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private PhoneRepository phoneRepository;
 
-	private static final Logger LOG = LoggerFactory.getLogger(CadastroServiceImpl.class);
-
 	@Override
 	public User registerUser(User user) {
 
 		List<User> findUser = userRepository.findByEmail(user.getEmail());
-		boolean isFound = findUser.size() > 0 ? true : false;
+		boolean isFound = (findUser.size() > 0 ? true : false);
 
 		if (isFound) {
 			return null;
@@ -50,12 +47,12 @@ public class CadastroServiceImpl implements CadastroService {
 			}
 		}
 
-		//Default fields
+		// Default fields
 		user.setCreated(new Date());
 		UUID idOne = UUID.randomUUID();
 		user.setToken(idOne.toString());
 		user.setLast_login(new Date());
-		
+
 		User saved = userRepository.save(user);
 
 		return saved;
@@ -88,32 +85,18 @@ public class CadastroServiceImpl implements CadastroService {
 	}
 
 	@Override
-	public void removeUser(Long id) {
-		userRepository.delete(id);
-	}
-
-	@Override
-	@Transactional
-	public void savePhone(Phone phone) throws DataAccessException {
-		phoneRepository.save(phone);
-	}
-
-	@Override
-	public Collection<Phone> findPhones() throws DataAccessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public User findById(long id) throws DataAccessException {
 		// TODO Auto-generated method stub
 		return userRepository.findById(new Long(id));
 	}
 
 	@Override
-	public List<User> findUserByEmailAddress(String email) throws DataAccessException {
-		// TODO Auto-generated method stub
-		return userRepository.findByEmail(email);
+	public User findUserByEmailAddress(String email) throws DataAccessException {
+		List<User> findUser = userRepository.findByEmail(email);
+		if (findUser.size() == 0)
+			return null;
+		else
+			return findUser.get(0);
 	}
 
 }

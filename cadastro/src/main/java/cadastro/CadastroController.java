@@ -2,6 +2,8 @@ package cadastro;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,10 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
 
+import cadastro.exceptions.CadastroException;
+import cadastro.exceptions.LoginException;
 import cadastro.service.CadastroService;
 
 @RestController
 class CadastroController {
+
+	private static final Logger LOG = LoggerFactory.getLogger(CadastroController.class);
+
+	@Autowired
+	private CadastroService cadastroService;
 
 	@RequestMapping("/greet")
 	String sayHello(@RequestParam("name") String name) {
@@ -29,22 +38,43 @@ class CadastroController {
 		return String.format("Hello %s!", name);
 	}
 
-	@Autowired
-	private CadastroService personService;
-
 	@RequestMapping(value = "/cadastro/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	User get(@PathVariable("id") String id) {
-		return personService.findById(new Long(id));
+		return cadastroService.findById(new Long(id));
 	}
 
 	@RequestMapping(value = "/cadastro", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	Map<String, Object> saveCadastro(@RequestBody User json) {
-		User userCreated = personService.registerUser(json);
+		User userCreated = cadastroService.registerUser(json);
 
 		if (userCreated == null) {
 			throw new CadastroException();
+		}
+
+		Map<String, Object> m = Maps.newHashMap();
+		m.put("success", true);
+		m.put("created", userCreated);
+		return m;
+	}
+
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	Map<String, Object> doLogin(@RequestBody Login json) {
+		User userCreated = cadastroService.findUserByEmailAddress(json.getEmail());
+
+		if (userCreated == null) {
+			LOG.error("Usuario nao existe");
+			throw new LoginException();
+		}
+
+		if (userCreated != null) {
+			if (!json.getSenha().equals(userCreated.getPassword())){
+				LOG.error("Usuario existe, senha errada");
+				throw new LoginException();
+			}
 		}
 
 		Map<String, Object> m = Maps.newHashMap();

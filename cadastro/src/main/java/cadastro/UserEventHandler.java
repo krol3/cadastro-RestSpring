@@ -1,7 +1,6 @@
 package cadastro;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -25,7 +24,7 @@ public class UserEventHandler {
 
 	@HandleBeforeCreate
 	public void handleBeforeCreate(User user) {
-		
+
 		user.setCreated(new Date());
 		UUID idOne = UUID.randomUUID();
 		user.setToken(idOne.toString());
@@ -36,7 +35,7 @@ public class UserEventHandler {
 
 	@HandleBeforeSave
 	public void handleBeforeSave(User user) {
-		
+
 		LOG.info("handleBeforeSave: " + user);
 	}
 

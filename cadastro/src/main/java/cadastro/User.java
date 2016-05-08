@@ -13,8 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table
 public class User {
@@ -27,13 +25,13 @@ public class User {
 	private String name;
 	private String email;
 	private String password;
-	//@JsonIgnore
+	// @JsonIgnore
 	private Date created;
-	//@JsonIgnore
+	// @JsonIgnore
 	private Date modified;
-	//@JsonIgnore
+	// @JsonIgnore
 	private Date last_login;
-	//@JsonIgnore
+	// @JsonIgnore
 	private String token;
 	// User
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
