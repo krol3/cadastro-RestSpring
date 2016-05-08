@@ -1,0 +1,30 @@
+FROM frolvlad/alpine-oraclejdk8:slim
+VOLUME /tmp
+
+ADD repo-key /
+RUN \
+  chmod 600 /repo-key && \  
+  echo "IdentityFile /repo-key" >> /etc/ssh/ssh_config && \  
+  echo -e "StrictHostKeyChecking no" >> /etc/ssh/ssh_config && \ 
+  git clone git@github.com:krol3/cadastro-RestSpring.git ~/code
+  
+RUN addgroup gdev && adduser -s /bin/bash -D -G gdev udev
+USER udev
+
+#repository GIT
+## Make ssh dir
+RUN mkdir ~/.ssh/
+## Copy over private key, and set permissions
+ADD id_rsa ~/.ssh/id_rsa
+RUN chmod 700 ~/.ssh/id_rsa
+RUN chown -R udev:gdev ~/.ssh
+
+# Create known_hosts
+RUN touch ~/.ssh/known_hosts
+
+# Remove host checking
+RUN echo "Host bitbucket.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+# Clone the conf files into the docker container
+RUN apt-get install -y git
+RUN git clone git@github.com:krol3/cadastro-RestSpring.git ~/code
