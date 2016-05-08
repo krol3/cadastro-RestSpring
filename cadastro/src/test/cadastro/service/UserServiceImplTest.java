@@ -16,15 +16,14 @@ import cadastro.Phone;
 import cadastro.PhoneRepository;
 import cadastro.User;
 import cadastro.UserRepository;
-import cadastro.service.UserService;
 
 @SpringApplicationConfiguration(classes = Application.class)
 public class UserServiceImplTest {
 
 	private static ApplicationContext applicationContext;
-	private static UserService userService;
-	private static UserRepository userRepository;
-	private static PhoneRepository phoneRepository;
+	private static CadastroService userService;
+	//private static UserRepository userRepository;
+	//private static PhoneRepository phoneRepository;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -33,16 +32,18 @@ public class UserServiceImplTest {
 		applicationContext = SpringApplication.run(Application.class);
 
 		// Load the user repository for manually changing the user records
-		userRepository = (UserRepository) applicationContext.getBean("userRepository");
-		phoneRepository = (PhoneRepository) applicationContext.getBean("phoneRepository");
+		// userRepository = (UserRepository)
+		// applicationContext.getBean("userRepository");
+		// phoneRepository = (PhoneRepository)
+		// applicationContext.getBean("phoneRepository");
 
 		// Load the UserServiceImpl service
-		userService = (UserService) applicationContext.getBean("userServiceImpl");
+		userService = (CadastroService) applicationContext.getBean("userServiceImpl");
 	}
 
 	@AfterClass
 	public static void afterClass() {
-		userRepository.deleteAll();
+		//userService.deleteAll();
 	}
 
 	@Test
@@ -51,10 +52,10 @@ public class UserServiceImplTest {
 		User user = new User("João da Silva", "joao@silva.org", "hunter2");
 
 		// Insert it into the repository
-		userService.saveUser(user);
+		userService.registerUser(user);
 
 		// Check to see if its there
-		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org");
+		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org").get(0);
 		Assert.assertNotNull(repositoryUser);
 		Assert.assertEquals("The user's name is not correct", "João da Silva", repositoryUser.getName());
 		Assert.assertEquals("The user's password is not correct", "hunter2", repositoryUser.getPassword());
@@ -75,10 +76,10 @@ public class UserServiceImplTest {
 		user.setPhones(phones);
 
 		// Insert it into the repository
-		userService.saveUser(user);
+		userService.registerUser(user);
 
 		// Check to see if its there
-		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org");
+		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org").get(0);
 		Assert.assertNotNull(repositoryUser);
 		Assert.assertEquals("The user's name is not correct", "João da Silva", repositoryUser.getName());
 		Assert.assertEquals("The user's password is not correct", "hunter2", repositoryUser.getPassword());

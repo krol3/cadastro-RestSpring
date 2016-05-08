@@ -2,10 +2,14 @@ package cadastro.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -19,35 +23,42 @@ import cadastro.User;
 import cadastro.UserRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class CadastroServiceImpl implements CadastroService {
 
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private PhoneRepository phoneRepository;
 
+	private static final Logger LOG = LoggerFactory.getLogger(CadastroServiceImpl.class);
+
 	@Override
-	public void saveUser(User user) {
+	public User registerUser(User user) {
 
-		User findUser = userRepository.findById(user.getId());
-		boolean isFound = findUser == null ? false : true;
+		List<User> findUser = userRepository.findByEmail(user.getEmail());
+		boolean isFound = findUser.size() > 0 ? true : false;
 
-		if (isFound)
-			return;
-
-		// Hibernate.initialize(user);
-		// Hibernate.initialize(user.getPhones());
+		if (isFound) {
+			return null;
+		}
 
 		if (user.getPhones() != null) {
 			for (Phone phone : user.getPhones()) {
 				Phone createdPhone = phoneRepository.save(phone);
 				phone.setId(createdPhone.getId());
-				System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxx> " + phone.getDdd());
+				LOG.info("xx> " + phone.getDdd());
 			}
 		}
 
-		userRepository.save(user);
+		//Default fields
+		user.setCreated(new Date());
+		UUID idOne = UUID.randomUUID();
+		user.setToken(idOne.toString());
+		user.setLast_login(new Date());
+		
+		User saved = userRepository.save(user);
 
+		return saved;
 	}
 
 	@Override
@@ -97,6 +108,12 @@ public class UserServiceImpl implements UserService {
 	public User findById(long id) throws DataAccessException {
 		// TODO Auto-generated method stub
 		return userRepository.findById(new Long(id));
+	}
+
+	@Override
+	public List<User> findUserByEmailAddress(String email) throws DataAccessException {
+		// TODO Auto-generated method stub
+		return userRepository.findByEmail(email);
 	}
 
 }

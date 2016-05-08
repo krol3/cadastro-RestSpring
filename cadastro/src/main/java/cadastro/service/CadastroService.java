@@ -8,12 +8,14 @@ import org.springframework.dao.DataAccessException;
 import cadastro.Phone;
 import cadastro.User;
 
-public interface UserService {
+public interface CadastroService {
 	public enum SortOrder {
 		ASCENDING, DESCENDING
 	}
 
-	public void saveUser(User user) throws DataAccessException;
+	public User registerUser(User user) throws DataAccessException;
+	
+	public List<User> findUserByEmailAddress(String email) throws DataAccessException;
 
 	public User getUser(Long id) throws DataAccessException;
 
