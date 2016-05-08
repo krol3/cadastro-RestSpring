@@ -1,14 +1,19 @@
 # cadastro-RestSpring
+Spring-boot 
 
 #Gradle
+--- withoud installed Gradle
+BEFORE Generate wrapper with specific version: gradle wrapper --gradle-version 2.3
+to RUN :
+./gradlew build && java -jar build/libs/cadastro-spring-rest-service-0.1.0.jar  
+
+--- installed Gradle
 gradle build
 java -jar build/libs/cadastro-spring-rest-service-0.1.0.jar --server.port=8181
 
 #Maven
+--- installed Maven3
 mvn3 clean package 
-
-
-#technologies
 
 #teste curl
 
