@@ -2,6 +2,8 @@ package cadastro;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +40,12 @@ class CadastroController {
 		return String.format("Hello %s!", name);
 	}
 
-	@RequestMapping(value = "/cadastro/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/cadastro/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
 	User get(@PathVariable("id") String id) {
 		return cadastroService.findById(new Long(id));
 	}
 
-	@RequestMapping(value = "/cadastro", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/cadastro", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	Map<String, Object> saveCadastro(@RequestBody User json) {
@@ -59,27 +61,62 @@ class CadastroController {
 		return m;
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	Map<String, Object> doLogin(@RequestBody Login json) {
-		User userCreated = cadastroService.findUserByEmailAddress(json.getEmail());
+	Map<String, Object> doLogin(@RequestParam("email") String email, @RequestParam("senha") String senha) {
+		User userFound = cadastroService.findUserByEmailAddress(email);
 
-		if (userCreated == null) {
+		if (userFound == null) {
 			LOG.error("Usuario nao existe");
 			throw new LoginException();
 		}
 
-		if (userCreated != null) {
-			if (!json.getSenha().equals(userCreated.getPassword())){
+		if (userFound != null) {
+			if (!senha.equals(userFound.getPassword())) {
 				LOG.error("Usuario existe, senha errada");
 				throw new LoginException();
 			}
 		}
 
+		// update last login
+		userFound = cadastroService.saveLastLoginUser(userFound);
+
 		Map<String, Object> m = Maps.newHashMap();
 		m.put("success", true);
-		m.put("created", userCreated);
+		m.put("created", userFound);
+		return m;
+	}
+
+	@RequestMapping(value = "/perfil/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	Map<String, Object> doPerfil(@PathVariable("id") int id, HttpServletRequest request) {
+
+		String token = request.getHeader("token");
+		LOG.info("token: " + token);
+
+		LOG.info("id: " + id);
+
+		User userFound = cadastroService.findUser(new Long(id));
+
+		if (userFound == null) {
+			LOG.error("Usuario nao existe");
+			throw new LoginException();
+		}
+
+		if (userFound != null) {
+			if (!token.equals(userFound.getToken())) {
+				LOG.error("Usuario existe, TOKEN errado");
+				throw new LoginException();
+			}
+		}
+
+		// FIXME verificar ultimo login, dentro dos 30 minutos
+
+		Map<String, Object> m = Maps.newHashMap();
+		m.put("success", true);
+		m.put("created", userFound);
 		return m;
 	}
 }

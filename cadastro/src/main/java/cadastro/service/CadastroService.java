@@ -15,9 +15,9 @@ public interface CadastroService {
 
 	public User findUserByEmailAddress(String email) throws DataAccessException;
 
-	public User getUser(Long id) throws DataAccessException;
+	public User findUser(Long id) throws DataAccessException;
 
-	public List<User> findUsers() throws DataAccessException;
+	public User saveLastLoginUser(User user) throws DataAccessException;
 
 	public User findById(long id) throws DataAccessException;
 

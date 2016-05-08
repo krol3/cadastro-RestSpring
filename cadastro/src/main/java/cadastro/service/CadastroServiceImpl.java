@@ -1,6 +1,5 @@
 package cadastro.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +50,7 @@ public class CadastroServiceImpl implements CadastroService {
 		user.setCreated(new Date());
 		UUID idOne = UUID.randomUUID();
 		user.setToken(idOne.toString());
-		user.setLast_login(new Date());
+		user.setModified(new Date());
 
 		User saved = userRepository.save(user);
 
@@ -59,17 +58,17 @@ public class CadastroServiceImpl implements CadastroService {
 	}
 
 	@Override
-	public User getUser(Long id) {
+	public User findUser(Long id) {
 		return userRepository.findOne(id);
 	}
 
 	@Override
-	public List<User> findUsers() {
-		List<User> users = new ArrayList<User>();
-		for (User user : userRepository.findAll()) {
-			users.add(user);
-		}
-		return users;
+	public User saveLastLoginUser(User user) {
+
+		user.setLast_login(new Date());
+		User saved = userRepository.save(user);
+
+		return saved;
 	}
 
 	@Override
