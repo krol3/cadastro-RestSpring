@@ -1,5 +1,10 @@
 package cadastro;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -113,10 +118,34 @@ class CadastroController {
 		}
 
 		// FIXME verificar ultimo login, dentro dos 30 minutos
+		Date lastLogin = userFound.getLast_login();
+		Instant iLastLogin = Instant.ofEpochMilli(lastLogin.getTime());
+		LocalDateTime dtLastLogin = LocalDateTime.ofInstant(iLastLogin, ZoneId.systemDefault());
+		LocalDateTime dtNow = LocalDateTime.now();
+
+		long time = getTime(dtLastLogin, dtNow);
+
+		long limite = 60 * 30;
+		LOG.info(" Limite: " + limite + " diferenca com lastLogin: " + time);
+
+		if (time >= limite) {
+			LOG.error("login foi a MENOS que 30 minutos atrás");
+			throw new LoginException();
+		}
 
 		Map<String, Object> m = Maps.newHashMap();
 		m.put("success", true);
 		m.put("created", userFound);
 		return m;
+	}
+
+	private static long getTime(LocalDateTime dob, LocalDateTime now) {
+		LocalDateTime today = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), dob.getHour(),
+				dob.getMinute(), dob.getSecond());
+		Duration duration = Duration.between(today, now);
+
+		long seconds = duration.getSeconds();
+
+		return seconds;
 	}
 }
