@@ -13,11 +13,9 @@ public interface UserService {
 		ASCENDING, DESCENDING
 	}
 
-	public void addUser(User user) throws DataAccessException;
+	public void saveUser(User user) throws DataAccessException;
 
 	public User getUser(Long id) throws DataAccessException;
-
-	public User findUserByEmailAddress(String emailAddress) throws DataAccessException;
 
 	public List<User> findUsers() throws DataAccessException;
 

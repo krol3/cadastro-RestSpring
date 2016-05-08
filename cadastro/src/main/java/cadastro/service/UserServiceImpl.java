@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 	private PhoneRepository phoneRepository;
 
 	@Override
-	public void addUser(User user) {
+	public void saveUser(User user) {
 
 		User findUser = userRepository.findById(user.getId());
 		boolean isFound = findUser == null ? false : true;
@@ -53,11 +53,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUser(Long id) {
 		return userRepository.findOne(id);
-	}
-
-	@Override
-	public User findUserByEmailAddress(String emailAddress) {
-		return userRepository.findByEmail(emailAddress);
 	}
 
 	@Override

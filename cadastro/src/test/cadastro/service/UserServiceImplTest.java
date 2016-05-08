@@ -11,11 +11,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
 
+import cadastro.Application;
 import cadastro.Phone;
 import cadastro.PhoneRepository;
 import cadastro.User;
 import cadastro.UserRepository;
-import cadastro.controllers.Application;
 import cadastro.service.UserService;
 
 @SpringApplicationConfiguration(classes = Application.class)
@@ -51,7 +51,7 @@ public class UserServiceImplTest {
 		User user = new User("João da Silva", "joao@silva.org", "hunter2");
 
 		// Insert it into the repository
-		userService.addUser(user);
+		userService.saveUser(user);
 
 		// Check to see if its there
 		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org");
@@ -75,7 +75,7 @@ public class UserServiceImplTest {
 		user.setPhones(phones);
 
 		// Insert it into the repository
-		userService.addUser(user);
+		userService.saveUser(user);
 
 		// Check to see if its there
 		User repositoryUser = userService.findUserByEmailAddress("joao@silva.org");
