@@ -16,12 +16,10 @@ import cadastro.Phone;
 import cadastro.User;
 
 @SpringApplicationConfiguration(classes = Application.class)
-public class UserServiceImplTest {
+public class CadastroServiceImplTest {
 
 	private static ApplicationContext applicationContext;
 	private static CadastroService cadastroService;
-	// private static UserRepository userRepository;
-	// private static PhoneRepository phoneRepository;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -29,14 +27,8 @@ public class UserServiceImplTest {
 		// Load our application context
 		applicationContext = SpringApplication.run(Application.class);
 
-		// Load the user repository for manually changing the user records
-		// userRepository = (UserRepository)
-		// applicationContext.getBean("userRepository");
-		// phoneRepository = (PhoneRepository)
-		// applicationContext.getBean("phoneRepository");
-
 		// Load the UserServiceImpl service
-		cadastroService = (CadastroService) applicationContext.getBean("userServiceImpl");
+		cadastroService = (CadastroService) applicationContext.getBean("cadastroServiceImpl");
 	}
 
 	@AfterClass

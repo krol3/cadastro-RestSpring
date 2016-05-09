@@ -17,27 +17,41 @@ mvn3 clean package && target/cadastro-spring-rest-service-0.1.0.jar --server.por
 
 # Docker
 docker build -t krol/cadastro-rest-spring-app:latest .
-docker run -p 8080:8080 -t krol/rest-spring-app  
+docker run -p 8080:8080 krol/cadastro-rest-spring-app:latest
 
 # Docker cloud
-cadastro-RestSpring
+http://cadastro-rest-spring-app-1206-1.3bdd4ee8.cont.dockerapp.io:8080/
 
-#teste curl
+#teste endpoint : CADASTRO
 
-##create a user: endpoint: cadastro POST
-curl -i -X POST -H "Content-Type:application/json" -d '{ "name": "João da Silva", "email": "joao@silva.org", "password": "hunter2", "phones": [ { "number": 987654321, "ddd": "21" }, { "number": 77777, "ddd": "11" } ] }' http://localhost:8181/cadastro
+## cadastrar um usuario: cadastro POST
+curl -i -X POST -H "Content-Type:application/json" -d '{ "name": "João da Silva", "email": "joao@silva.org", "password": "hunter2", "phones": [ { "number": 987654321, "ddd": "21" }, { "number": 77777, "ddd": "11" } ] }' http://localhost:8080/cadastro
 
-##query all the users: endpoint: cadastro GET
-curl http://localhost:8181/cadastro
+http://localhost:8181/login?email=joao@silva.org&senha=hunter2
 
 ##query for specific user: endpoint: /cadastro/{id} GET
-curl http://localhost:8181/cadastro/1
+curl http://localhost:8080/cadastro/1
 
-##all the custom queries: /cadastro
-curl http://localhost:8181/cadastro/search
+#teste endpoint : LOGIN
+curl http://localhost:8080/login?email=joao@silva.org&senha=hunter2
+curl http://cadastro-rest-spring-app-1206-1.3bdd4ee8.cont.dockerapp.io:8080/login?email=joao@silva.org&senha=hunter2
+
+#teste endpoint : PERFIL
+curl --header "token: 361a4e78-724b-4dc0-82ef-b0504b6170cf" http://localhost:8080/perfil/1
+curl --header "token: 361a4e78-724b-4dc0-82ef-b0504b6170cf" http://cadastro-rest-spring-app-1206-1.3bdd4ee8.cont.dockerapp.io:8080/perfil/1
+curl --header "token: 5a786f63-1b5f-4494-ac2f-3eca84b7a592" http://cadastro-rest-spring-app-1206-1.3bdd4ee8.cont.dockerapp.io:8080/perfil/1
+
+#teste endpoint : USER
+
+## selecionar todos os usuarios cadastrados
+curl http://localhost:8080/user/
+
+##all the custom queries: /user
+curl http://cadastro-rest-spring-app-1206-1.3bdd4ee8.cont.dockerapp.io:8080/user/search
 
 ##find a user by email
 curl http://localhost:8181/cadastro/search/findByEmail?email=joao@silva.org
+curl http://cadastro-rest-spring-app-1206-1.3bdd4ee8.cont.dockerapp.io:8080/user/search/findByEmail\?email\=joao@silva.org
 
 ##replace user
 curl -i -X PUT -H "Content-Type:application/json" -d '{ "name": "João da SilvaXX", "email": "joao@silva.orgXXX", "password": "hunter2XX", "phones": [ { "number": 98765432177, "ddd": "21" } ] }' http://localhost:8181/cadastro/1
