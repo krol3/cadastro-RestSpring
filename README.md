@@ -16,8 +16,11 @@ java -jar build/libs/cadastro-spring-rest-service-0.1.0.jar --server.port=8181
 mvn3 clean package && target/cadastro-spring-rest-service-0.1.0.jar --server.port=8181
 
 # Docker
-docker build -t krol/rest-spring-app .
+docker build -t krol/cadastro-rest-spring-app:latest .
 docker run -p 8080:8080 -t krol/rest-spring-app  
+
+# Docker cloud
+cadastro-RestSpring
 
 #teste curl
 
